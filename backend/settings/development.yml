@@ -1,0 +1,18 @@
+application:
+  protocol: http
+  host: 127.0.0.1
+  base_url: "http://127.0.0.1"
+
+debug: true
+
+frontend_url: "http://localhost:3000"
+
+secret:
+  token_expiration: 15
+  cookie_expiration: 1440
+
+superuser:
+  email: "sirneij@gmail.com"
+  password: "123456data"
+  first_name: "John Owolabi"
+  last_name: "Idogun"

@@ -1,0 +1,15 @@
+application:
+  port: 8080
+
+redis:
+  pool_max_open: 16
+  pool_max_idle: 8
+  pool_timeout_seconds: 1
+  pool_expire_seconds: 60
+
+email:
+  host: "smtp.gmail.com"
+  host_user: "sirneij@gmail.com"
+  host_user_password: ""
+
+interval_of_coin_update: 24

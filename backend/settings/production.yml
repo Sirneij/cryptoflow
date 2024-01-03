@@ -1,0 +1,18 @@
+application:
+  protocol: https
+  host: 0.0.0.0
+  base_url: ""
+
+debug: false
+
+secret:
+  token_expiration: 15
+  cookie_expiration: 1440
+
+frontend_url: ""
+
+superuser:
+  email: "sirneij@gmail.com"
+  password: "123456data"
+  first_name: "John O"
+  last_name: "Idogun"
