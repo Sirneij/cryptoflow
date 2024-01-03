@@ -25,7 +25,7 @@ pub async fn send_email(
         .from(
             format!(
                 "{} <{}>",
-                "StackOverflow clone with axum and SvelteKit",
+                "CryptoFlow with axum and SvelteKit",
                 settings.email.host_user.clone()
             )
             .parse()
@@ -128,7 +128,7 @@ pub async fn send_multipart_email(
 
     let text = format!(
         r#"
-        Thanks for signing up for a StackOverflow clone with Rust (axum) and SvelteKit. We're excited to have you on board! 
+        Thanks for signing up for a CryptoFlow with Rust (axum) and SvelteKit. We're excited to have you on board! 
 
         For future reference, your user ID number is {}.
 
@@ -142,7 +142,7 @@ pub async fn send_multipart_email(
 
         Thanks,
 
-        StackOverflow clone with Rust (axum) and SvelteKit Team 
+        CryptoFlow with Rust (axum) and SvelteKit Team 
         "#,
         user.id,
         settings.frontend_url,

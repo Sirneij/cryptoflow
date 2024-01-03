@@ -63,7 +63,7 @@ pub async fn register_user(
 
     // Send activation code to user's email
     crate::utils::send_multipart_email(
-        "Welcome to StackOverflow clone with Rust (axum) and SvelteKit".to_string(),
+        "Welcome to CryptoFlow with Rust (axum) and SvelteKit".to_string(),
         user,
         state.clone(),
         "user_welcome.html",
