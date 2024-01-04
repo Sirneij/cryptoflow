@@ -11,4 +11,5 @@ CREATE TABLE IF NOT EXISTS users(
     thumbnail TEXT NULL,
     date_joined TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS users_id_email_is_active_indx ON users (id, email, is_active);
+CREATE INDEX IF NOT EXISTS users_id_is_active_indx ON users (id, is_active);
+CREATE INDEX IF NOT EXISTS users_email_is_active_indx ON users (email, is_active);
