@@ -1,4 +1,4 @@
-#[derive(serde::Serialize, Debug)]
+#[derive(serde::Serialize, Debug, sqlx::FromRow)]
 pub struct User {
     pub id: uuid::Uuid,
     pub email: String,
@@ -12,7 +12,7 @@ pub struct User {
     pub date_joined: time::OffsetDateTime,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, sqlx::FromRow)]
 pub struct UserVisible {
     pub id: uuid::Uuid,
     pub email: String,
