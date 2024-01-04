@@ -89,6 +89,7 @@ async fn run(
     let cors = tower_http::cors::CorsLayer::new()
         .allow_credentials(true)
         .allow_methods(vec![
+            axum::http::Method::OPTIONS,
             axum::http::Method::GET,
             axum::http::Method::POST,
             axum::http::Method::PUT,
