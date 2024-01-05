@@ -8,7 +8,7 @@ use axum_extra::extract::cookie::{Cookie, PrivateCookieJar, SameSite};
 use time::Duration;
 
 #[axum::debug_handler]
-#[tracing::instrument(name = "login_user", skip(cookies, state, login))]
+#[tracing::instrument(name = "login_user", skip(cookies, state, login), fields(email = %login.email))]
 pub async fn login_user(
     cookies: PrivateCookieJar,
     State(state): State<AppState>,

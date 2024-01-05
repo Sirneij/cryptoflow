@@ -25,6 +25,22 @@ pub struct UserVisible {
     pub date_joined: time::OffsetDateTime,
 }
 
+impl From<User> for UserVisible {
+    fn from(user: User) -> Self {
+        UserVisible {
+            id: user.id,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            is_active: user.is_active,
+            is_staff: user.is_staff,
+            is_superuser: user.is_superuser,
+            thumbnail: user.thumbnail,
+            date_joined: user.date_joined,
+        }
+    }
+}
+
 #[derive(serde::Serialize)]
 pub struct LoggedInUser {
     pub id: uuid::Uuid,

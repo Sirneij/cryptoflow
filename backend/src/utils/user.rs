@@ -29,6 +29,8 @@ pub async fn get_user_id_from_session(
         ))
     })?;
 
+    tracing::debug!("Session ID: {}", session_id);
+
     let user_id: String = bb8_redis::redis::cmd("GET")
         .arg(&session_id)
         .query_async(&mut *redis_con)
