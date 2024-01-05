@@ -1,0 +1,40 @@
+<div class="flex justify-center items-start pt-12 min-h-screen">
+	<div class="w-full md:max-w-md">
+		<form
+			class="bg-[#041014] shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 hover:bg-black border border-black hover:border-[#145369]"
+		>
+			<div class="mb-4">
+				<label class="block text-sm font-bold mb-2" for="email"> Email </label>
+				<input
+					class="shadow appearance-none bg-black border border-[#145369] rounded w-full py-2 px-3 leading-tight focus:outline-none focus:border-[#145369]"
+					id="email"
+					type="email"
+					placeholder="Email"
+				/>
+			</div>
+			<div class="mb-6">
+				<label class="block text-sm font-bold mb-2" for="password"> Password </label>
+				<input
+					class="shadow appearance-none bg-black border border-[#145369] rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:border-[#145369]"
+					id="password"
+					type="password"
+					placeholder="Password"
+				/>
+			</div>
+			<div class="flex items-center justify-between">
+				<button
+					class="bg-[#041014] border border-[#145369] hover:border-[#2596be] text-[#efefef] hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+					type="button"
+				>
+					Sign In
+				</button>
+				<a
+					class="inline-block align-baseline font-bold text-sm hover:text-[#2596be] transition duration-300 ease-in-out"
+					href="/"
+				>
+					Forgot Password?
+				</a>
+			</div>
+		</form>
+	</div>
+</div>
