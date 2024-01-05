@@ -6,7 +6,7 @@
 
 `CryptoFlow` is a full-stack web application built with [Axum][0] and [SvelteKit][1]. It's a Q&A system tailored towards the world of cryptocurrency!
 
-It's building process is explained in [this series][2] of articles.
+Its building process is explained in [this series][2] of articles.
 
 [0]: https://github.com/tokio-rs/axum "Ergonomic and modular web framework built with Tokio, Tower, and Hyper"
 [1]: https://kit.svelte.dev/ "web development, streamlined"
