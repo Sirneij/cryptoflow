@@ -1,6 +1,5 @@
 use serde_json::Value as JsonValue;
 use sqlx::FromRow;
-use time::OffsetDateTime;
 use uuid::Uuid;
 
 #[derive(Debug, serde::Serialize, Clone)]
@@ -11,8 +10,8 @@ pub struct Question {
     pub content: String,
     pub raw_content: String,
     pub author: Uuid,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -38,8 +37,8 @@ pub struct Answer {
     pub content: String,
     pub raw_content: String,
     pub author: Uuid,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -70,8 +69,8 @@ pub struct QuestionAuthorWithTags {
     pub content: String,
     pub raw_content: String,
     pub author: crate::models::UserVisible,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
     pub tags: Vec<Tag>,
 }
 
@@ -81,8 +80,8 @@ pub struct AnswerAuthor {
     pub content: String,
     pub raw_content: String,
     pub author: crate::models::UserVisible,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(FromRow, Debug)]
@@ -93,8 +92,8 @@ pub struct QuestionAuthorWithTagsQueryResult {
     pub slug: String,
     pub content: String,
     pub raw_content: String,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
     // JSON aggregation of tags
     pub tags_json: JsonValue,
     // Fields from `users`
@@ -106,7 +105,7 @@ pub struct QuestionAuthorWithTagsQueryResult {
     pub user_is_staff: Option<bool>,
     pub user_is_superuser: Option<bool>,
     pub user_thumbnail: Option<String>,
-    pub user_date_joined: OffsetDateTime,
+    pub user_date_joined: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(FromRow, Debug)]
@@ -115,8 +114,8 @@ pub struct AnswerAuthorQueryResult {
     pub id: Uuid,
     pub content: String,
     pub raw_content: String,
-    pub created_at: OffsetDateTime,
-    pub updated_at: OffsetDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
     // Fields from `users`
     pub user_id: Uuid,
     pub user_email: String,
@@ -126,5 +125,5 @@ pub struct AnswerAuthorQueryResult {
     pub user_is_staff: Option<bool>,
     pub user_is_superuser: Option<bool>,
     pub user_thumbnail: Option<String>,
-    pub user_date_joined: OffsetDateTime,
+    pub user_date_joined: chrono::DateTime<chrono::Utc>,
 }

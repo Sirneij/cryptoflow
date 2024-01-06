@@ -9,7 +9,7 @@ pub struct User {
     pub is_staff: Option<bool>,
     pub is_superuser: Option<bool>,
     pub thumbnail: Option<String>,
-    pub date_joined: time::OffsetDateTime,
+    pub date_joined: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, sqlx::FromRow)]
@@ -22,7 +22,7 @@ pub struct UserVisible {
     pub is_staff: Option<bool>,
     pub is_superuser: Option<bool>,
     pub thumbnail: Option<String>,
-    pub date_joined: time::OffsetDateTime,
+    pub date_joined: chrono::DateTime<chrono::Utc>,
 }
 
 impl From<User> for UserVisible {

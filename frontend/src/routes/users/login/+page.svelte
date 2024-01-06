@@ -1,19 +1,24 @@
 <script>
 	import { applyAction, enhance } from '$app/forms';
 	import { page } from '$app/stores';
+	import Loader from '$lib/components/Loader.svelte';
 	import { receive, send } from '$lib/utils/helpers';
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
 
+	let message = '',
+		processing = false;
+
 	/** @type {import('./$types').SubmitFunction} */
 	const handleLogin = async () => {
+		processing = true;
 		return async ({ result }) => {
+			processing = false;
 			await applyAction(result);
 		};
 	};
 
-	let message = '';
 	if ($page.url.searchParams.get('message')) {
 		message = $page.url.search.split('=')[1].replaceAll('%20', ' ');
 	}
@@ -62,11 +67,16 @@
 				/>
 			</div>
 			<div class="flex items-center justify-between">
-				<button
-					class="bg-black border border-[#145369] hover:border-[#2596be] text-[#efefef] hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
-				>
-					Sign In
-				</button>
+				{#if processing}
+					<Loader width={20} message="Logging in..." />
+				{:else}
+					<button
+						class="bg-black border border-[#145369] hover:border-[#2596be] text-[#efefef] hover:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+					>
+						Sign In
+					</button>
+				{/if}
+
 				<a
 					class="inline-block align-baseline font-bold text-sm hover:text-[#2596be] transition duration-300 ease-in-out"
 					href="/"

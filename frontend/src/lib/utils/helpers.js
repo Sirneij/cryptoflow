@@ -140,3 +140,28 @@ export function formatCoinName(coinName) {
 	// Return the formatted name with the coin's symbol (if available)
 	return `${formattedName} (${coinSymbols[formattedName] || 'N/A'})`;
 }
+
+export function timeAgo(dateString) {
+	const date = new Date(dateString);
+	const now = new Date();
+
+	const secondsAgo = Math.round((now - date) / 1000);
+	const minutesAgo = Math.round(secondsAgo / 60);
+	const hoursAgo = Math.round(minutesAgo / 60);
+	const daysAgo = Math.round(hoursAgo / 24);
+
+	const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+	if (secondsAgo < 60) {
+		return rtf.format(-secondsAgo, 'second');
+	} else if (minutesAgo < 60) {
+		return rtf.format(-minutesAgo, 'minute');
+	} else if (hoursAgo < 24) {
+		return rtf.format(-hoursAgo, 'hour');
+	} else if (daysAgo < 30) {
+		return rtf.format(-daysAgo, 'day');
+	} else {
+		// Fallback to a more standard date format
+		return date.toLocaleDateString();
+	}
+}

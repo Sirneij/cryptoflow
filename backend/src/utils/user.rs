@@ -17,7 +17,7 @@ pub async fn get_user_id_from_session(
         .map(|cookie| cookie.value().to_owned())
         .ok_or_else(|| {
             CustomAppError::from((
-                "Session ID not found".to_string(),
+                "Session ID not found because you are not authenticated".to_string(),
                 ErrorContext::UnauthorizedAccess,
             ))
         })?;

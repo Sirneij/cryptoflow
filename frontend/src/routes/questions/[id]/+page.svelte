@@ -1,15 +1,37 @@
 <script>
+	import { applyAction, enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Logo from '$lib/assets/logo.png';
-	import { formatCoinName, formatPrice, getCoinsPricesServer } from '$lib/utils/helpers.js';
+	import {
+		formatCoinName,
+		formatPrice,
+		getCoinsPricesServer,
+		timeAgo
+	} from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
+	import { receive, send } from '$lib/utils/helpers';
+	import Loader from '$lib/components/Loader.svelte';
+	import { scale } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import Modal from '$lib/components/Modal.svelte';
 
 	export let data;
+
+	/** @type {import('./$types').ActionData} */
+	export let form;
 
 	$: ({ question, answers } = data);
 
 	/** @type {Array<{"name": String, "price": number}>} */
 	let coinPrices = [];
+	let processing = false,
+		showModal = false,
+		answerID = '';
+
+	const open = () => (showModal = true);
+	const close = () => (showModal = false);
+	// @ts-ignore
+	const setAnswerID = (id) => (answerID = id);
 
 	onMount(async () => {
 		if (question) {
@@ -18,13 +40,36 @@
 			coinPrices = await getCoinsPricesServer($page.data.fetch, tagsString, 'usd');
 		}
 	});
+
+	/** @type {import('./$types').SubmitFunction} */
+	const handleAnswerQuestion = async () => {
+		processing = true;
+		return async ({ result }) => {
+			processing = false;
+			// @ts-ignore
+			answers = [...answers, result.data.answer];
+			await applyAction(result);
+		};
+	};
+
+	/** @type {import('./$types').SubmitFunction} */
+	const handleDeleteAnswer = async () => {
+		return async ({ result }) => {
+			close();
+			if (result.type === 'success') {
+				// @ts-ignore
+				answers = answers.filter((answer) => answer.id !== answerID);
+			}
+			await applyAction(result);
+		};
+	};
 </script>
 
 <div class="max-w-5xl mx-auto p-4">
 	<!-- Stats Section -->
 	<div class="bg-[#0a0a0a] p-6 rounded-lg shadow mb-6 flex justify-between items-center">
-		<p>Created: {question.created_at}</p>
-		<p>Last Updated: {question.updated_at}</p>
+		<p>Asked: {timeAgo(question.created_at)}</p>
+		<p>Modified: {timeAgo(question.updated_at)}</p>
 	</div>
 	<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
 		<!-- Main Content -->
@@ -43,9 +88,10 @@
 					{/each}
 				</div>
 				<div class="flex justify-end mt-4">
-					<button class="mr-2 text-blue-500 hover:text-blue-600">Edit</button>
-					<button class="mr-2 text-red-500 hover:text-red-600">Delete</button>
-					<button class="text-yellow-500 hover:text-yellow-600">Flag</button>
+					{#if question.author.id === $page.data.user.id}
+						<button class="mr-2 text-blue-500 hover:text-blue-600">Edit</button>
+						<button class="mr-2 text-red-500 hover:text-red-600">Delete</button>
+					{/if}
 				</div>
 				<hr class="my-4" />
 				<div class="flex justify-end items-center">
@@ -65,8 +111,25 @@
 
 			<!-- Answers Section -->
 			{#each answers as answer (answer.id)}
-				<div class="bg-[#041014] p-6 rounded-lg shadow mb-4">
+				<div
+					class="bg-[#041014] p-6 rounded-lg shadow mb-4"
+					transition:scale|local={{ start: 0.4 }}
+					animate:flip={{ duration: 200 }}
+				>
 					<p>{@html answer.content}</p>
+
+					<div class="flex justify-end mt-4">
+						{#if answer.author.id === $page.data.user.id}
+							<button class="mr-2 text-blue-500 hover:text-blue-600">Edit</button>
+							<button
+								class="mr-2 text-red-500 hover:text-red-600"
+								on:click={() => {
+									open();
+									setAnswerID(answer.id);
+								}}>Delete</button
+							>
+						{/if}
+					</div>
 					<hr class="my-4" />
 					<div class="flex justify-end items-center">
 						<span class="mr-3">{answer.author.first_name + ' ' + answer.author.last_name}</span>
@@ -77,11 +140,6 @@
 						/>
 					</div>
 				</div>
-				<div class="flex justify-end mt-4">
-					<button class="mr-2 text-blue-500 hover:text-blue-600">Edit</button>
-					<button class="mr-2 text-red-500 hover:text-red-600">Delete</button>
-					<button class="text-yellow-500 hover:text-yellow-600">Flag</button>
-				</div>
 			{:else}
 				<div class="bg-[#041014] p-6 rounded-lg shadow mb-4">
 					<p>No answers yet.</p>
@@ -89,18 +147,42 @@
 			{/each}
 
 			<!-- Post Answer Section -->
-			<form class="bg-[#041014] p-6 rounded-lg shadow">
+			<form
+				class="bg-[#041014] p-6 rounded-lg shadow"
+				method="POST"
+				action="?/answer"
+				use:enhance={handleAnswerQuestion}
+			>
 				<h2 class="text-xl font-bold mb-4">Your Answer</h2>
+				{#if form?.errors}
+					<!-- Error Message Display -->
+					{#each form?.errors as error (error.id)}
+						<p
+							class="text-red-500 p-3 text-center mb-4 italic"
+							in:receive={{ key: error.id }}
+							out:send={{ key: error.id }}
+						>
+							{error.message}
+						</p>
+					{/each}
+				{/if}
 				<textarea
 					class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:border-[#2596be] focus:outline-none"
 					rows="6"
+					name="content"
 					placeholder="Write your answer here (markdown supported)..."
-				></textarea>
-				<button
-					class="mt-4 px-6 py-2 bg-[#041014] border border-[#145369] hover:border-[#2596be] text-white rounded"
 				>
-					Post Your Answer
-				</button>
+				</textarea>
+
+				{#if processing}
+					<Loader width={20} message="Posting your answer..." />
+				{:else}
+					<button
+						class="mt-4 px-6 py-2 bg-[#041014] border border-[#145369] hover:border-[#2596be] text-white rounded"
+					>
+						Post Your Answer
+					</button>
+				{/if}
 			</form>
 		</div>
 
@@ -112,7 +194,11 @@
 			>
 				<div class="space-y-4">
 					{#each coinPrices as coin (coin.name)}
-						<div class="bg-[#145369] p-3 rounded-lg text-center">
+						<div
+							class="bg-[#145369] p-3 rounded-lg text-center"
+							transition:scale|local={{ start: 0.4 }}
+							animate:flip={{ duration: 200 }}
+						>
 							<p class="text-3xl font-bold">
 								<span class="text-base">$</span>{formatPrice(coin.price)}
 							</p>
@@ -124,3 +210,36 @@
 		</div>
 	</div>
 </div>
+
+{#if showModal}
+	<Modal on:close={close}>
+		<form
+			class="bg-[#041014] p-6 rounded-lg shadow text-center"
+			method="POST"
+			action="?/deleteAnswer"
+			use:enhance={handleDeleteAnswer}
+		>
+			{#if form?.errors}
+				<!-- Error Message Display -->
+				{#each form?.errors as error (error.id)}
+					<p
+						class="text-red-500 p-3 text-center mb-4 italic"
+						in:receive={{ key: error.id }}
+						out:send={{ key: error.id }}
+					>
+						{error.message}
+					</p>
+				{/each}
+			{/if}
+			<p class="text-red-500 p-3 mb-4 italic">
+				Are you sure you want to delete this answer (id={answerID})
+			</p>
+			<input type="hidden" name="answerID" value={answerID} />
+			<button
+				class="mt-4 px-6 py-2 bg-[#041014] border border-red-400 hover:border-red-700 text-red-600 rounded"
+			>
+				Delete Answer
+			</button>
+		</form>
+	</Modal>
+{/if}

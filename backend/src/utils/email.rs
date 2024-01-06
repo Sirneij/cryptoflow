@@ -109,11 +109,9 @@ pub async fn send_multipart_email(
     let settings = crate::settings::get_settings().expect("Unable to load settings.");
     let title = subject.clone();
 
-    let now = time::OffsetDateTime::now_utc();
-    let expiration_time = now + time::Duration::minutes(settings.secret.token_expiration);
-    let exact_time = expiration_time
-        .format(&time::format_description::well_known::Rfc2822)
-        .unwrap();
+    let now = chrono::Local::now();
+    let expiration_time = now + chrono::Duration::minutes(settings.secret.token_expiration);
+    let exact_time = expiration_time.format("%A %B %d, %Y at %r").to_string();
 
     let template = state.env.get_template(template_name).unwrap();
     let ctx = minijinja::context! {
