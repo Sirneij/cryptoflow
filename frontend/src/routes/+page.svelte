@@ -11,7 +11,7 @@
 	<div class="hidden md:block md:w-1/4 p-4">
 		<!-- Developer Profile Card -->
 		<div
-			class="bg-[#041014] hover:bg-black border border-black hover:border-[#145369] rounded-lg shadow p-4 mb-4"
+			class="bg-[#041014] hover:bg-black border border-black hover:border-[#145369] rounded-lg shadow p-4 mb-1"
 		>
 			<img src={developerImage} alt="Developer" class="rounded-full w-24 h-24 mx-auto mb-3" />
 			<h3 class="text-center text-xl font-bold mb-2">Your Name</h3>
@@ -34,7 +34,7 @@
 			{#each questions as question (question.id)}
 				<div
 					class="
-				bg-[#041014] mb-4 rounded-lg shadow hover:bg-black border border-black hover:border-[#145369]"
+				bg-[#041014] mb-1 rounded-lg shadow hover:bg-black border border-black hover:border-[#145369]"
 				>
 					<div class="p-4">
 						<a href="/questions/{question.id}" class="text-xl font-semibold hover:text-[#2596be]">

@@ -12,12 +12,14 @@ pub async fn ask_question(
     CustomAppJson(new_question): CustomAppJson<NewQuestion>,
 ) -> Result<impl IntoResponse, CustomAppError> {
     // Process tags
-    let tag_names: Vec<String> = new_question
+    let tag_ids: Vec<String> = new_question
         .tags
         .split(",")
-        .map(|s| s.to_string().to_lowercase())
+        .map(|s| s.trim().to_string())
         .collect();
-    let tag_ids = state.db_store.get_tag_ids_from_db(tag_names).await?;
+
+    // Validate tags
+    state.db_store.validate_tags(tag_ids.clone()).await?;
 
     let (user_uuid, _) =
         crate::utils::get_user_id_from_session(&cookies, &state.redis_store, false).await?;

@@ -29,7 +29,7 @@ pub struct CreateQuestion {
     pub content: String,
     pub raw_content: String,
     pub author: Uuid,
-    pub tags: Vec<Uuid>,
+    pub tags: Vec<String>,
 }
 
 #[derive(serde::Serialize, Debug)]
@@ -85,7 +85,7 @@ pub struct AnswerAuthor {
     pub updated_at: OffsetDateTime,
 }
 
-#[derive(FromRow)]
+#[derive(FromRow, Debug)]
 pub struct QuestionAuthorWithTagsQueryResult {
     // Fields from `questions`
     pub id: Uuid,

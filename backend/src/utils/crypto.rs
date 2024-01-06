@@ -2,16 +2,22 @@ use reqwest;
 use serde_json::Value;
 use std::collections::HashMap;
 
-pub type CryptoPrices = HashMap<String, f64>;
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct CryptoPrice {
+    name: String,
+    price: f64,
+}
+
+pub type CryptoPrices = Vec<CryptoPrice>;
 
 #[tracing::instrument(name = "get_crypto_prices")]
 pub async fn get_crypto_prices(
-    cryptos: Vec<String>,
+    cryptos: String,
     currency: &str,
 ) -> Result<CryptoPrices, reqwest::Error> {
     let url = format!(
         "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies={}",
-        cryptos.join(","),
+        cryptos,
         currency.to_lowercase()
     );
 
@@ -20,13 +26,10 @@ pub async fn get_crypto_prices(
         .json::<HashMap<String, Value>>()
         .await?;
 
-    tracing::info!("Got response: {:?}", response);
-
-    // Transform the response into a HashMap of cryptocurrency names to their USD prices
     let mut prices = CryptoPrices::new();
-    for (crypto, data) in response {
+    for (name, data) in response {
         if let Some(price) = data.get("usd").and_then(|v| v.as_f64()) {
-            prices.insert(crypto, price);
+            prices.push(CryptoPrice { name, price });
         }
     }
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { quintOut } from 'svelte/easing';
 import { crossfade } from 'svelte/transition';
 
@@ -64,4 +65,78 @@ export function isEmpty(obj) {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Handle all GET requests.
+ * @file lib/utils/helpers.js
+ * @param {typeof fetch} sveltekitFetch - Fetch object from sveltekit
+ * @param {string} targetUrl - The URL whose resource will be fetched.
+ * @param {RequestCredentials} [credentials='omit'] - Request credential. Defaults to 'omit'.
+ * @param {'GET' | 'POST'} [requestMethod='GET'] - Request method. Defaults to 'GET'.
+ * * @param {RequestMode | undefined} [mode='cors'] - Request mode. Defaults to 'GET'.
+ */
+export const getRequests = async (
+	sveltekitFetch,
+	targetUrl,
+	credentials = 'omit',
+	requestMethod = 'GET',
+	mode = 'cors'
+) => {
+	const headers = { 'Content-Type': 'application/json' };
+
+	const requestInitOptions = {
+		method: requestMethod,
+		mode: mode,
+		credentials: credentials,
+		headers: headers
+	};
+
+	const res = await sveltekitFetch(targetUrl, requestInitOptions);
+
+	return res.ok && (await res.json());
+};
+
+/**
+ * Get coin prices.
+ * @file lib/utils/helpers.js
+ * @param {typeof fetch} sveltekitFetch - Fetch object from sveltekit
+ * @param {string} tags - The tags of the coins to fetch prices for.
+ * @param {string} currency - The currency to fetch prices in.
+ */
+export const getCoinsPricesServer = async (sveltekitFetch, tags, currency) => {
+	const res = await getRequests(
+		sveltekitFetch,
+		`/api/crypto/prices?tags=${tags}&currency=${currency}`
+	);
+
+	return res;
+};
+
+/**
+ * Format price to be more readable.
+ * @file lib/utils/helpers.js
+ * @param {number} price - The price to format.
+ */
+export function formatPrice(price) {
+	return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+const coinSymbols = {
+	Bitcoin: 'BTC',
+	Ethereum: 'ETH'
+	// Add other coins and their symbols here
+};
+
+/**
+ * Format the coin name to be more readable.
+ * @file lib/utils/helpers.js
+ * @param {string} coinName - The coin name to format.
+ */
+export function formatCoinName(coinName) {
+	// Format the name by capitalizing the first letter of each word
+	const formattedName = coinName.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
+
+	// Return the formatted name with the coin's symbol (if available)
+	return `${formattedName} (${coinSymbols[formattedName] || 'N/A'})`;
 }
