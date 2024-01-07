@@ -14,6 +14,8 @@
 	import { scale } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import Modal from '$lib/components/Modal.svelte';
+	import hljs from 'highlight.js';
+	import('highlight.js/styles/night-owl.css');
 
 	export let data;
 
@@ -26,7 +28,8 @@
 	let coinPrices = [];
 	let processing = false,
 		showModal = false,
-		answerID = '';
+		answerID = '',
+		answerContent = '';
 
 	const open = () => (showModal = true);
 	const close = () => (showModal = false);
@@ -34,6 +37,7 @@
 	const setAnswerID = (id) => (answerID = id);
 
 	onMount(async () => {
+		hljs.highlightAll();
 		if (question) {
 			// @ts-ignore
 			const tagsString = question.tags.map((tag) => tag.id).join(',');
@@ -46,9 +50,13 @@
 		processing = true;
 		return async ({ result }) => {
 			processing = false;
-			// @ts-ignore
-			answers = [...answers, result.data.answer];
-			await applyAction(result);
+			if (result.type === 'success') {
+				// @ts-ignore
+				answers = [...answers, result.data.answer];
+				await applyAction(result);
+				answerContent = '';
+				hljs.highlightAll(); // Reapply syntax highlighting
+			}
 		};
 	};
 
@@ -169,10 +177,10 @@
 				<textarea
 					class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:border-[#2596be] focus:outline-none"
 					rows="6"
+					bind:value={answerContent}
 					name="content"
 					placeholder="Write your answer here (markdown supported)..."
-				>
-				</textarea>
+				/>
 
 				{#if processing}
 					<Loader width={20} message="Posting your answer..." />
