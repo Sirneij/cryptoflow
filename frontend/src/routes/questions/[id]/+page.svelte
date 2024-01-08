@@ -9,12 +9,12 @@
 		timeAgo
 	} from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
-	import { receive, send } from '$lib/utils/helpers';
 	import Loader from '$lib/components/Loader.svelte';
 	import { scale } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import Modal from '$lib/components/Modal.svelte';
 	import hljs from 'highlight.js';
+	import ShowError from '$lib/components/ShowError.svelte';
 	import('highlight.js/styles/night-owl.css');
 
 	export let data;
@@ -136,7 +136,9 @@
 						>
 							Edit
 						</a>
-						<button class="mr-2 text-red-500 hover:text-red-600">Delete</button>
+						<a class="mr-2 text-red-500 hover:text-red-600" href="/questions/{question.id}/delete">
+							Delete
+						</a>
 					{/if}
 				</div>
 				<hr class="my-4" />
@@ -181,8 +183,10 @@
 								on:click={() => {
 									open();
 									setAnswerID(answer.id);
-								}}>Delete</button
+								}}
 							>
+								Delete
+							</button>
 						{/if}
 					</div>
 					<hr class="my-4" />
@@ -209,18 +213,7 @@
 				use:enhance={handleAnswerQuestion}
 			>
 				<h2 class="text-xl font-bold mb-4">Your Answer</h2>
-				{#if form?.errors}
-					<!-- Error Message Display -->
-					{#each form?.errors as error (error.id)}
-						<p
-							class="text-red-500 p-3 text-center mb-4 italic"
-							in:receive={{ key: error.id }}
-							out:send={{ key: error.id }}
-						>
-							{error.message}
-						</p>
-					{/each}
-				{/if}
+				<ShowError {form} />
 				<textarea
 					class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:border-[#2596be] focus:outline-none"
 					rows="6"
@@ -274,18 +267,7 @@
 			action="?/deleteAnswer"
 			use:enhance={handleDeleteAnswer}
 		>
-			{#if form?.errors}
-				<!-- Error Message Display -->
-				{#each form?.errors as error (error.id)}
-					<p
-						class="text-red-500 p-3 text-center mb-4 italic"
-						in:receive={{ key: error.id }}
-						out:send={{ key: error.id }}
-					>
-						{error.message}
-					</p>
-				{/each}
-			{/if}
+			<ShowError {form} />
 			<p class="text-red-500 p-3 mb-4 italic">
 				Are you sure you want to delete this answer (id={answerID})
 			</p>
@@ -307,18 +289,7 @@
 			action="?/updateAnswer"
 			use:enhance={handleUpdateAnswer}
 		>
-			{#if form?.errors}
-				<!-- Error Message Display -->
-				{#each form?.errors as error (error.id)}
-					<p
-						class="text-red-500 p-3 text-center mb-4 italic"
-						in:receive={{ key: error.id }}
-						out:send={{ key: error.id }}
-					>
-						{error.message}
-					</p>
-				{/each}
-			{/if}
+			<ShowError {form} />
 			<input type="hidden" name="answerID" value={answerID} />
 			<textarea
 				class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:border-[#2596be] focus:outline-none"

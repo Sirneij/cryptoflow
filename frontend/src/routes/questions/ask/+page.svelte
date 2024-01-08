@@ -1,8 +1,8 @@
 <script>
 	import { applyAction, enhance } from '$app/forms';
 	import Loader from '$lib/components/Loader.svelte';
+	import ShowError from '$lib/components/ShowError.svelte';
 	import { selectedTags } from '$lib/stores/tags.stores.js';
-	import { receive, send } from '$lib/utils/helpers.js';
 	import { filterTags } from '$lib/utils/select.custom';
 
 	export let data;
@@ -35,18 +35,7 @@
 		action="?/ask"
 		use:enhance={handleAskQuestion}
 	>
-		{#if form?.errors}
-			<!-- Error Message Display -->
-			{#each form?.errors as error (error.id)}
-				<p
-					class="text-red-500 p-3 text-center mb-4 italic"
-					in:receive={{ key: error.id }}
-					out:send={{ key: error.id }}
-				>
-					{error.message}
-				</p>
-			{/each}
-		{/if}
+		<ShowError {form} />
 		<div class="mb-4">
 			<label for="title" class="block text-[#efefef] text-sm font-bold mb-2">Title</label>
 			<input

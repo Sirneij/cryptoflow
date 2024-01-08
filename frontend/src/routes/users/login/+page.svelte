@@ -2,7 +2,7 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
-	import { receive, send } from '$lib/utils/helpers';
+	import ShowError from '$lib/components/ShowError.svelte';
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
@@ -34,18 +34,7 @@
 		>
 			<h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
 
-			{#if form?.errors}
-				<!-- Error Message Display -->
-				{#each form?.errors as error (error.id)}
-					<p
-						class="text-red-500 p-3 text-center mb-4 italic"
-						in:receive={{ key: error.id }}
-						out:send={{ key: error.id }}
-					>
-						{error.message}
-					</p>
-				{/each}
-			{/if}
+			<ShowError {form} />
 			<div class="mb-4">
 				<label class="block text-sm font-bold mb-2" for="email"> Email </label>
 				<input
