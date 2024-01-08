@@ -124,7 +124,10 @@ export function formatPrice(price) {
 
 const coinSymbols = {
 	Bitcoin: 'BTC',
-	Ethereum: 'ETH'
+	Ethereum: 'ETH',
+	BNB: 'BNB',
+	Litecoin: 'LTC',
+	Dogecoin: 'DOGE'
 	// Add other coins and their symbols here
 };
 

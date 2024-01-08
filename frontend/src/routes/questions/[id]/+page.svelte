@@ -130,7 +130,12 @@
 				</div>
 				<div class="flex justify-end mt-4">
 					{#if $page.data.user && question.author.id === $page.data.user.id}
-						<button class="mr-2 text-blue-500 hover:text-blue-600">Edit</button>
+						<a
+							class="mr-2 text-blue-500 hover:text-blue-600"
+							href="/questions/{question.id}/update"
+						>
+							Edit
+						</a>
 						<button class="mr-2 text-red-500 hover:text-red-600">Delete</button>
 					{/if}
 				</div>

@@ -9,6 +9,15 @@ import { get } from 'svelte/store';
 /** @type {HTMLInputElement} */
 let inputFromOutside;
 
+/**
+ * Set the input element.
+ * @file $lib/utils/select.custom.ts
+ * @param {HTMLInputElement} inputElement - The input element
+ */
+export function setInputElement(inputElement) {
+	inputFromOutside = inputElement;
+}
+
 // Create a Tag type that has id, name, and symbol properties all of type string in jsdoc
 /**
  * @typedef {Object} Tag
@@ -122,7 +131,7 @@ function displaySuggestions(tags) {
  * Display selected tags to the user.
  * @file $lib/utils/select.custom.ts
  */
-function displaySelectedTags() {
+export function displaySelectedTags() {
 	const container = document.getElementById('selected-tags');
 	// @ts-ignore
 	container.innerHTML = ''; // Clear existing tags
