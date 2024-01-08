@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+pre {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+.tag-container {
+	color: var(--text-slate-gray);
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.suggestions {
+	max-width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	color: var(--text-alice-blue);
+	max-height: 150px;
+	overflow-y: scroll;
+}
+.suggestions h5 {
+	border-bottom: 1px solid var(--text-slate-gray);
+}
+.suggestion-item {
+	padding-bottom: 0.3rem;
+	border-left: 1px solid transparent;
+	cursor: pointer;
+	transition: all 0.4s;
+}
+.suggestion-item:hover {
+	border-left: 1px solid var(--text-slate-gray);
+}
+.suggestions .tag {
+	background: transparent;
+	margin-bottom: -0.4rem;
+}
+.suggestions small {
+	display: inline-block;
+	font-size: var(--fontSize-6);
+	margin-left: 1.3em;
+	font-style: italic;
+}
+
+.tooltip {
+	position: relative;
+}

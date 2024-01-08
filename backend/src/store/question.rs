@@ -85,6 +85,62 @@ impl crate::store::Store {
         Ok(question_author_with_tags)
     }
 
+    #[tracing::instrument(name = "update_question_in_db", skip(update_question))]
+    pub async fn update_question_in_db(
+        &self,
+        question_id: uuid::Uuid,
+        update_question: crate::models::CreateQuestion,
+    ) -> Result<crate::models::QuestionAuthorWithTags, sqlx::Error> {
+        let mut transaction = self.connection.begin().await?;
+
+        let q_id = match sqlx::query(
+            "UPDATE questions SET title = $1, slug = $2, content = $3, raw_content = $4 WHERE id = $5 AND author = $6 RETURNING id",
+        )
+        .bind(&update_question.title)
+        .bind(&update_question.slug)
+        .bind(&update_question.content)
+        .bind(&update_question.raw_content)
+        .bind(question_id)
+        .bind(&update_question.author)
+        .map(|row: sqlx::postgres::PgRow| -> uuid::Uuid { row.get("id") })
+        .fetch_one(&mut *transaction)
+        .await {
+            Ok(id) => id,
+            Err(e) => return Err(e),
+        };
+
+        match sqlx::query("DELETE FROM question_tags WHERE question = $1")
+            .bind(q_id)
+            .execute(&mut *transaction)
+            .await
+        {
+            Ok(_) => {
+                tracing::info!("Tag ids deleted successfully");
+            }
+            Err(e) => return Err(e),
+        }
+
+        match sqlx::query("INSERT INTO question_tags (question, tag) SELECT $1, * FROM UNNEST($2)")
+            .bind(q_id)
+            .bind(&update_question.tags)
+            .execute(&mut *transaction)
+            .await
+        {
+            Ok(_) => {
+                tracing::info!("Tag ids inserted successfully");
+            }
+            Err(e) => return Err(e),
+        }
+
+        let question_author_with_tags = self
+            .get_question_from_db(Some(&mut transaction), q_id)
+            .await?;
+
+        transaction.commit().await?;
+
+        Ok(question_author_with_tags)
+    }
+
     #[tracing::instrument(name = "get_all_questions_from_db")]
     pub async fn get_all_questions_from_db(
         &self,

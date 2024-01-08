@@ -15,9 +15,12 @@ pub fn qa_routes(state: crate::startup::AppState) -> Router<crate::startup::AppS
         .route("/answer/:question_id", post(answer::answer_question))
         .route(
             "/questions/:question_id",
-            delete(questions::delete_a_question),
+            delete(questions::delete_a_question).patch(questions::update_a_question),
         )
-        .route("/answers/:answer_id", delete(answers::delete_an_answer))
+        .route(
+            "/answers/:answer_id",
+            delete(answers::delete_an_answer).patch(answers::update_answer),
+        )
         .route_layer(axum::middleware::from_fn_with_state(
             state.clone(),
             validate_authentication_session,

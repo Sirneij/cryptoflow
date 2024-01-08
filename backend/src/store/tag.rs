@@ -17,7 +17,7 @@ impl crate::store::Store {
         }
     }
     #[tracing::instrument(name = "validate_tags", skip(tag_ids))]
-    pub async fn validate_tags(&self, tag_ids: Vec<String>) -> Result<(), sqlx::Error> {
+    pub async fn validate_tags(&self, tag_ids: &[String]) -> Result<(), sqlx::Error> {
         if tag_ids.is_empty() {
             return Err(sqlx::Error::RowNotFound);
         }

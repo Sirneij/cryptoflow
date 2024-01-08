@@ -11,16 +11,42 @@ pub async fn ask_question(
     cookies: PrivateCookieJar,
     CustomAppJson(new_question): CustomAppJson<NewQuestion>,
 ) -> Result<impl IntoResponse, CustomAppError> {
+    if new_question.title.is_empty() {
+        return Err(CustomAppError::from((
+            "Title cannot be empty".to_string(),
+            crate::utils::ErrorContext::BadRequest,
+        )));
+    }
+
+    if new_question.content.is_empty() {
+        return Err(CustomAppError::from((
+            "Content cannot be empty".to_string(),
+            crate::utils::ErrorContext::BadRequest,
+        )));
+    }
+
+    if new_question.tags.is_empty() {
+        return Err(CustomAppError::from((
+            "Tags cannot be empty".to_string(),
+            crate::utils::ErrorContext::BadRequest,
+        )));
+    }
+
     // Process tags
-    let tag_ids: Vec<String> = new_question
+    let mut tag_ids: Vec<String> = new_question
         .tags
         .split(",")
         .map(|s| s.trim().to_string())
         .collect();
 
-    // Validate tags
-    state.db_store.validate_tags(tag_ids.clone()).await?;
+    // Sort and deduplicate tags
+    tag_ids.sort();
+    tag_ids.dedup();
 
+    // Validate tags
+    state.db_store.validate_tags(&tag_ids).await?;
+
+    // Get author id from session
     let (user_uuid, _) =
         crate::utils::get_user_id_from_session(&cookies, &state.redis_store, false).await?;
 

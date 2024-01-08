@@ -28,7 +28,7 @@
 			<!-- Right side items -->
 			<div class="flex items-center space-x-4">
 				{#if !$page.data.user}
-					<div class="hidden md:flex space-x-1">
+					<div class="flex space-x-1">
 						<a
 							href="/users/login"
 							class="py-2 px-3 hover:text-white transition duration-300 ease-in-out"
@@ -43,6 +43,14 @@
 						</a>
 					</div>
 				{:else}
+					<div class="flex space-x-1">
+						<a
+							href="/questions/ask"
+							class="py-2 px-3 bg-[#041014] border border-[#145369] hover:border-[#2596be] text-[#efefef] hover:text-white transition duration-300 ease-in-out"
+						>
+							Ask Question
+						</a>
+					</div>
 					<!-- User Image and Dropdown -->
 					<div class="relative">
 						<button on:click|stopPropagation={toggleDropdown} class="focus:outline-none">

@@ -16,7 +16,7 @@
 	.loading {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		/* justify-content: center; */
 	}
 	.loading p {
 		margin-left: 0.5rem;

@@ -31,6 +31,13 @@ pub struct CreateQuestion {
     pub tags: Vec<String>,
 }
 
+#[derive(serde::Deserialize, Debug)]
+pub struct UpdateQuestion {
+    pub title: String,
+    pub tags: String,
+    pub content: String,
+}
+
 #[derive(serde::Serialize, Debug)]
 pub struct Answer {
     pub id: Uuid,
@@ -52,6 +59,14 @@ pub struct CreateAnswer {
     pub raw_content: String,
     pub author: Uuid,
     pub question: Uuid,
+}
+
+#[derive(serde::Serialize, Debug)]
+pub struct UpdateAnswer {
+    pub content: String,
+    pub raw_content: String,
+    pub author: Uuid,
+    pub answer_id: Uuid,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, FromRow)]
@@ -126,4 +141,27 @@ pub struct AnswerAuthorQueryResult {
     pub user_is_superuser: Option<bool>,
     pub user_thumbnail: Option<String>,
     pub user_date_joined: chrono::DateTime<chrono::Utc>,
+}
+
+impl From<AnswerAuthorQueryResult> for AnswerAuthor {
+    fn from(query_result: AnswerAuthorQueryResult) -> Self {
+        AnswerAuthor {
+            id: query_result.id,
+            content: query_result.content,
+            raw_content: query_result.raw_content,
+            created_at: query_result.created_at,
+            updated_at: query_result.updated_at,
+            author: crate::models::UserVisible {
+                id: query_result.user_id,
+                email: query_result.user_email,
+                first_name: query_result.user_first_name,
+                last_name: query_result.user_last_name,
+                is_active: query_result.user_is_active,
+                is_staff: query_result.user_is_staff,
+                is_superuser: query_result.user_is_superuser,
+                thumbnail: query_result.user_thumbnail,
+                date_joined: query_result.user_date_joined,
+            },
+        }
+    }
 }
