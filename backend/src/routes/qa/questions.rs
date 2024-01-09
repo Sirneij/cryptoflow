@@ -83,6 +83,14 @@ pub async fn update_a_question(
         .map(|s| s.trim().to_string())
         .collect();
 
+    // Check if tags are more than 4
+    if tag_ids.len() > 4 {
+        return Err(CustomAppError::from((
+            "Tags cannot be more than 4".to_string(),
+            crate::utils::ErrorContext::BadRequest,
+        )));
+    }
+
     // Sort and deduplicate tags
     tag_ids.sort();
     tag_ids.dedup();
