@@ -2,6 +2,7 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Logo from '$lib/assets/logo.png';
+	import { notification } from '$lib/stores/notification.store';
 
 	let showDropdown = false;
 
@@ -12,6 +13,16 @@
 	function closeDropdown() {
 		showDropdown = false;
 	}
+
+	const handleLogout = async () => {
+		// @ts-ignore
+		return async ({ result }) => {
+			if (result.type === 'redirect') {
+				$notification = { message: 'Logout successful', colorName: 'blue' };
+			}
+			await applyAction(result);
+		};
+	};
 </script>
 
 <nav class="shadow py-4 text-[#9b9b9b]">
@@ -80,11 +91,7 @@
 									class="block px-4 py-2 text-sm hover:bg-gray-700"
 									action="/users/login?/logout"
 									method="POST"
-									use:enhance={async () => {
-										return async ({ result }) => {
-											await applyAction(result);
-										};
-									}}
+									use:enhance={handleLogout}
 								>
 									<input type="hidden" name="next" value={$page.url.pathname} />
 									<button>Logout</button>

@@ -1,9 +1,28 @@
 <script>
 	import developerImage from '$lib/assets/logo.png';
+	import { onMount } from 'svelte';
 
 	export let data;
 
 	$: ({ questions, coins } = data);
+
+	// Pagination
+	let currentPage = 0,
+		/** @type {Array<{name: string}>} */
+		paginatedCoins = [];
+	const tagsPerPage = 10;
+
+	onMount(() => {
+		paginatedCoins = coins.slice(currentPage * tagsPerPage, (currentPage + 1) * tagsPerPage);
+	});
+
+	const loadMore = () => {
+		currentPage++;
+		paginatedCoins = [
+			...paginatedCoins,
+			...coins.slice(currentPage * tagsPerPage, (currentPage + 1) * tagsPerPage)
+		];
+	};
 </script>
 
 <div class="min-h-screen flex flex-col md:flex-row text-[#efefef]">
@@ -14,7 +33,7 @@
 			class="bg-[#041014] hover:bg-black border border-black hover:border-[#145369] rounded-lg shadow p-4 mb-1"
 		>
 			<img src={developerImage} alt="Developer" class="rounded-full w-24 h-24 mx-auto mb-3" />
-			<h3 class="text-center text-xl font-bold mb-2">Your Name</h3>
+			<h3 class="text-center text-xl font-bold mb-2">John O. Idogun</h3>
 			<p class="text-center">Developer & Creator of CryptoFlow</p>
 		</div>
 		<div
@@ -22,10 +41,14 @@
 		>
 			<h2 class="text-xl font-semibold mb-4">Tags</h2>
 			<ul class="space-y-2">
-				{#each coins as tag}
+				{#each paginatedCoins as tag}
 					<li class="border-b border-[#0a0a0a] hover:bg-[#041014] px-3 py-1">{tag.name}</li>
 				{/each}
 			</ul>
+			<button
+				class="mt-4 bg-[#145369] hover:bg-[#2596be] px-4 py-2 rounded-lg text-white"
+				on:click={loadMore}>Load more</button
+			>
 		</div>
 	</div>
 

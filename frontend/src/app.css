@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    /* Notification */
+    --text-emerald: rgb(5 150 105);
+    --border-emerald: rgb(110 231 183);
+    --bg-emerald: rgb(209 250 229);
+    --border-rose: rgb(253 164 175);
+    --bg-rose: rgb(255 228 230);
+    --text-rose: rgb(225 29 72);
+    --border-blue: rgb(147 197 253);
+    --bg-blue: rgb(219 234 254);
+    --text-blue: rgb(37 99 235);
+    --border-orange: rgb(253 186 116);
+    --bg-orange: rgb(255 237 213);
+    --text-orange: rgb(234 88 12);
+}
+.notification {
+    width: 50%;
+    background-color: var(--bg-emerald);
+    color: var(--text-emerald);
+    border: 2px solid var(--border-emerald);
+    border-radius: 3px;
+    font-size: var(--fs-6);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 2rem;
+    right: 0;
+    transition: all 0.3s;
+    z-index: 9999;
+}
+.notification.disappear {
+    visibility: hidden;
+}
+@media (max-width: 600px) {
+    .notification {
+        width: 70%;
+    }
+}
+
 pre {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
@@ -47,4 +88,9 @@ pre {
 
 .tooltip {
 	position: relative;
+}
+
+p a {
+    color: var(--text-blue);
+    text-decoration: underline;
 }

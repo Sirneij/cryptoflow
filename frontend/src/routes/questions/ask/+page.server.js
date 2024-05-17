@@ -4,7 +4,7 @@ import { fail, redirect } from '@sveltejs/kit';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, locals }) {
 	if (!locals.user) {
-		throw redirect(302, `/users/login?next=/questions/ask`);
+		redirect(302, `/users/login?next=/questions/ask`);
 	}
 	const fetchCoins = async () => {
 		const res = await fetch(`${BASE_API_URI}/crypto/coins`);
@@ -57,10 +57,6 @@ export const actions = {
 
 		const response = await res.json();
 
-		console.log(response);
-
-		console.log(response.id);
-
-		throw redirect(302, `/questions/${response.id}`);
+		redirect(302, `/questions/${response.id}`);
 	}
 };

@@ -4,7 +4,7 @@ import { fail, redirect } from '@sveltejs/kit';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, locals, params }) {
 	if (!locals.user) {
-		throw redirect(302, `/users/login?next=/questions/${params.id}/update}`);
+		redirect(302, `/users/login?next=/questions/${params.id}/update}`);
 	}
 
 	const fetchQuestion = async () => {
@@ -62,6 +62,6 @@ export const actions = {
 			return fail(400, { errors: errors });
 		}
 
-		throw redirect(302, `/questions/${params.id}`);
+		redirect(302, `/questions/${params.id}`);
 	}
 };

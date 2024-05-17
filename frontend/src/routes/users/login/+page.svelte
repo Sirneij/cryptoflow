@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import Loader from '$lib/components/Loader.svelte';
 	import ShowError from '$lib/components/ShowError.svelte';
+	import { notification } from '$lib/stores/notification.store';
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
@@ -15,6 +16,9 @@
 		processing = true;
 		return async ({ result }) => {
 			processing = false;
+			if (result.type === 'redirect') {
+				$notification = { message: 'Login successful', colorName: 'blue' };
+			}
 			await applyAction(result);
 		};
 	};

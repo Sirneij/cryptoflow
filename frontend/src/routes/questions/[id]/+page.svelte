@@ -15,6 +15,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import hljs from 'highlight.js';
 	import ShowError from '$lib/components/ShowError.svelte';
+	import { notification } from '$lib/stores/notification.store.js';
 	import('highlight.js/styles/night-owl.css');
 
 	export let data;
@@ -67,6 +68,7 @@
 				answers = [...answers, result.data.answer];
 				answerContent = '';
 				hljs.highlightAll(); // Reapply syntax highlighting
+				notification.set({ message: 'Answer posted successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
 		};
@@ -79,6 +81,7 @@
 			if (result.type === 'success') {
 				// @ts-ignore
 				answers = answers.filter((answer) => answer.id !== answerID);
+				notification.set({ message: 'Answer deleted successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
 		};
@@ -100,6 +103,8 @@
 				});
 				answerContent = '';
 				hljs.highlightAll(); // Reapply syntax highlighting
+
+				notification.set({ message: 'Answer updated successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
 		};
@@ -228,7 +233,11 @@
 					<button
 						class="mt-4 px-6 py-2 bg-[#041014] border border-[#145369] hover:border-[#2596be] text-white rounded"
 					>
-						Post Your Answer
+						{#if $page.data.user && $page.data.user.id === question.author.id}
+							Answer your question
+						{:else}
+							Post Your Answer
+						{/if}
 					</button>
 				{/if}
 			</form>
@@ -250,7 +259,15 @@
 							<p class="text-3xl font-bold">
 								<span class="text-base">$</span>{formatPrice(coin.price)}
 							</p>
-							<h3 class="text-lg">{formatCoinName(coin.name)}</h3>
+							<!-- Check whether coin name is in question's tags -->
+							{#if question.tags.find((tag) => tag.id === coin.name)}
+								<h3 class="text-lg">
+									{formatCoinName(
+										coin.name,
+										question.tags.find((tag) => tag.id === coin.name).symbol
+									)}
+								</h3>
+							{/if}
 						</div>
 					{/each}
 				</div>

@@ -5,7 +5,7 @@ import { fail, redirect } from '@sveltejs/kit';
 export async function load({ locals }) {
 	// redirect user if logged in
 	if (locals.user) {
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 }
 
@@ -80,7 +80,7 @@ export const actions = {
 			});
 		}
 
-		throw redirect(
+		redirect(
 			303,
 			next !== 'null' && next !== null && next !== undefined && next !== 'undefined' ? next : '/'
 		);
@@ -111,7 +111,7 @@ export const actions = {
 		cookies.delete('cryptoflow-sessionid', { path: '/' });
 
 		// redirect the user
-		throw redirect(
+		redirect(
 			302,
 			next !== 'null' && next !== null && next !== undefined && next !== 'undefined'
 				? next

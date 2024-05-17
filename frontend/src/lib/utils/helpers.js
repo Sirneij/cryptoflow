@@ -122,26 +122,18 @@ export function formatPrice(price) {
 	return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-const coinSymbols = {
-	Bitcoin: 'BTC',
-	Ethereum: 'ETH',
-	BNB: 'BNB',
-	Litecoin: 'LTC',
-	Dogecoin: 'DOGE'
-	// Add other coins and their symbols here
-};
-
 /**
  * Format the coin name to be more readable.
  * @file lib/utils/helpers.js
  * @param {string} coinName - The coin name to format.
+ * @param {string} coinSymbol - The coin symbol to format.
  */
-export function formatCoinName(coinName) {
+export function formatCoinName(coinName, coinSymbol) {
 	// Format the name by capitalizing the first letter of each word
 	const formattedName = coinName.toLowerCase().replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
 
 	// Return the formatted name with the coin's symbol (if available)
-	return `${formattedName} (${coinSymbols[formattedName] || 'N/A'})`;
+	return `${formattedName} (${coinSymbol.toUpperCase()})`;
 }
 
 export function timeAgo(dateString) {

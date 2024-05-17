@@ -2,6 +2,7 @@
 	import { applyAction, enhance } from '$app/forms';
 	import Loader from '$lib/components/Loader.svelte';
 	import ShowError from '$lib/components/ShowError.svelte';
+	import { notification } from '$lib/stores/notification.store.js';
 	import { selectedTags } from '$lib/stores/tags.stores.js';
 	import { displaySelectedTags, filterTags, setInputElement } from '$lib/utils/select.custom.js';
 	import { onMount } from 'svelte';
@@ -33,6 +34,9 @@
 		processing = true;
 		return async ({ result }) => {
 			processing = false;
+			if (result.type === 'redirect') {
+				notification.set({ message: 'Question updated successfully', colorName: 'blue' });
+			}
 			await applyAction(result);
 		};
 	};

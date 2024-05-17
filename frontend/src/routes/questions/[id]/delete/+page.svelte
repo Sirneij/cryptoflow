@@ -2,12 +2,16 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import ShowError from '$lib/components/ShowError.svelte';
+	import { notification } from '$lib/stores/notification.store';
 	/** @type {import('./$types').ActionData} */
 	export let form;
 
 	/** @type {import('./$types').SubmitFunction} */
 	const handleDeleteQuestion = async () => {
 		return async ({ result }) => {
+			if (result.type === 'redirect') {
+				notification.set({ message: 'Question deleted successfully', colorName: 'blue' });
+			}
 			await applyAction(result);
 		};
 	};
