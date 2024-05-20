@@ -1,5 +1,6 @@
 <script>
 	import developerImage from '$lib/assets/logo.png';
+	import Charts from '$lib/components/Charts.svelte';
 	import { onMount } from 'svelte';
 
 	export let data;
@@ -14,6 +15,8 @@
 
 	onMount(() => {
 		paginatedCoins = coins.slice(currentPage * tagsPerPage, (currentPage + 1) * tagsPerPage);
+
+		console.log(coins);
 	});
 
 	const loadMore = () => {
@@ -25,7 +28,7 @@
 	};
 </script>
 
-<div class="min-h-screen flex flex-col md:flex-row text-[#efefef]">
+<div class="flex flex-col md:flex-row text-[#efefef]">
 	<!-- Left Column for Tags -->
 	<div class="hidden md:block md:w-1/4 p-4">
 		<!-- Developer Profile Card -->
@@ -52,7 +55,7 @@
 		</div>
 	</div>
 
-	<div class="md:w-1/2 p-4">
+	<div class="md:w-5/12 py-4 px-2">
 		{#if questions}
 			{#each questions as question (question.id)}
 				<div
@@ -80,12 +83,12 @@
 	</div>
 
 	<!-- Right Column for Charts -->
-	<div class="hidden md:block md:w-1/4 p-4">
+	<div class="hidden md:block md:w-1/3 px-2 py-4">
 		<div
-			class="bg-[#041014] rounded-lg shadow p-4 hover:bg-black border border-black hover:border-[#145369]"
+			class="bg-[#041014] rounded-lg shadow p-4 hover:bg-black border border-black hover:border-[#145369] h-screen"
 		>
 			<h2 class="text-xl font-semibold mb-4">Charts</h2>
-			<!-- Insert your chart components or images here -->
+			<Charts {coins} />
 		</div>
 	</div>
 </div>

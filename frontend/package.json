@@ -33,6 +33,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"highlight.js": "^11.9.0"
+		"chart.js": "^4.4.3",
+		"chartjs-adapter-moment": "^1.0.1",
+		"highlight.js": "^11.9.0",
+		"moment": "^2.30.1"
 	}
 }
