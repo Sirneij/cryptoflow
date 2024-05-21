@@ -16,44 +16,49 @@
 	import hljs from 'highlight.js';
 	import ShowError from '$lib/components/ShowError.svelte';
 	import { notification } from '$lib/stores/notification.store.js';
-	import('highlight.js/styles/night-owl.css');
+	import 'highlight.js/styles/night-owl.css';
 
 	export let data;
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
+	/** @type {Array<{"name": String, "price": number}>} */
+	let coinPrices = [];
+	let processing = false;
+	let showDeleteModal = false;
+	let showEditModal = false;
+	let answerID = '';
+	let answerContent = '';
 
 	$: ({ question, answers } = data);
 
-	/** @type {Array<{"name": String, "price": number}>} */
-	let coinPrices = [];
-	let processing = false,
-		showDeleteModal = false,
-		showEditModal = false,
-		answerID = '',
-		answerContent = '';
-
-	const open = (isDelete = true) => {
+	const openModal = (isDelete = true) => {
 		if (isDelete) {
 			showDeleteModal = true;
 		} else {
 			showEditModal = true;
 		}
 	};
-	const close = () => {
+
+	const closeModal = () => {
 		showDeleteModal = false;
 		showEditModal = false;
 	};
-	// @ts-ignore
+
+	/** @param {String} id */
 	const setAnswerID = (id) => (answerID = id);
-	// @ts-ignore
+	/** @param {String} content */
 	const setAnswerContent = (content) => (answerContent = content);
 
 	onMount(async () => {
 		hljs.highlightAll();
 		if (question) {
-			// @ts-ignore
-			const tagsString = question.tags.map((tag) => tag.id).join(',');
+			const tagsString = question.tags
+				.map(
+					/** @param {{"id": String}} tag */
+					(tag) => tag.id
+				)
+				.join(',');
 			coinPrices = await getCoinsPricesServer($page.data.fetch, tagsString, 'usd');
 		}
 	});
@@ -64,11 +69,12 @@
 		return async ({ result }) => {
 			processing = false;
 			if (result.type === 'success') {
-				// @ts-ignore
-				answers = [...answers, result.data.answer];
-				answerContent = '';
-				hljs.highlightAll(); // Reapply syntax highlighting
-				notification.set({ message: 'Answer posted successfully', colorName: 'blue' });
+				if (result.data && 'answer' in result.data) {
+					answers = [...answers, result.data.answer];
+					answerContent = '';
+					hljs.highlightAll(); // Reapply syntax highlighting
+					notification.set({ message: 'Answer posted successfully', colorName: 'blue' });
+				}
 			}
 			await applyAction(result);
 		};
@@ -77,33 +83,34 @@
 	/** @type {import('./$types').SubmitFunction} */
 	const handleDeleteAnswer = async () => {
 		return async ({ result }) => {
-			close();
+			closeModal();
 			if (result.type === 'success') {
-				// @ts-ignore
-				answers = answers.filter((answer) => answer.id !== answerID);
+				answers = answers.filter(
+					/** @param {{"id": String}} answer */
+					(answer) => answer.id !== answerID
+				);
 				notification.set({ message: 'Answer deleted successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
 		};
 	};
 
-	/** @type {import('./$types').SubmitFunction}*/
+	/** @type {import('./$types').SubmitFunction} */
 	const handleUpdateAnswer = async () => {
 		return async ({ result }) => {
-			close();
+			closeModal();
 			if (result.type === 'success') {
-				// @ts-ignore
-				// Update the answer in the answers array with the one returned from the server
-				answers = answers.map((answer) => {
-					if (answer.id === answerID) {
-						// @ts-ignore
-						return result.data.answer;
+				answers = answers.map(
+					/** @param {{"id": String}} answer */
+					(answer) => {
+						if (result.data && 'answer' in result.data) {
+							return answer.id === answerID ? result.data.answer : answer;
+						}
+						return answer;
 					}
-					return answer;
-				});
+				);
 				answerContent = '';
 				hljs.highlightAll(); // Reapply syntax highlighting
-
 				notification.set({ message: 'Answer updated successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
@@ -124,7 +131,7 @@
 			<div class="bg-[#041014] p-6 rounded-lg shadow mb-6 border border-black">
 				<h1 class="text-2xl font-bold mb-4">{question.title}</h1>
 				<p>{@html question.content}</p>
-				<div class="flex mt-4">
+				<div class="flex mt-4 flex-wrap">
 					{#each question.tags as tag}
 						<span
 							class="mr-2 mb-2 px-3 py-1 text-sm bg-[#041014] border border-[#145369] hover:border-[#2596be] rounded"
@@ -161,8 +168,6 @@
 
 			<!-- Answers Section -->
 			<h2 class="text-xl font-bold mb-4">Answers</h2>
-
-			<!-- Answers Section -->
 			{#each answers as answer (answer.id)}
 				<div
 					class="bg-[#041014] p-6 rounded-lg shadow mb-4"
@@ -176,7 +181,7 @@
 							<button
 								class="mr-2 text-blue-500 hover:text-blue-600"
 								on:click={() => {
-									open(false);
+									openModal(false);
 									setAnswerID(answer.id);
 									setAnswerContent(answer.raw_content);
 								}}
@@ -186,7 +191,7 @@
 							<button
 								class="mr-2 text-red-500 hover:text-red-600"
 								on:click={() => {
-									open();
+									openModal();
 									setAnswerID(answer.id);
 								}}
 							>
@@ -198,7 +203,7 @@
 					<div class="flex justify-end items-center">
 						<span class="mr-3">{answer.author.first_name + ' ' + answer.author.last_name}</span>
 						<img
-							src={answer.author.thumbnail ? question.author.thumbnail : Logo}
+							src={answer.author.thumbnail ? answer.author.thumbnail : Logo}
 							alt={answer.author.first_name + ' ' + answer.author.last_name}
 							class="h-10 w-10 rounded-full"
 						/>
@@ -259,14 +264,26 @@
 							<p class="text-3xl font-bold">
 								<span class="text-base">$</span>{formatPrice(coin.price)}
 							</p>
-							<!-- Check whether coin name is in question's tags -->
-							{#if question.tags.find((tag) => tag.id === coin.name)}
-								<h3 class="text-lg">
-									{formatCoinName(
-										coin.name,
-										question.tags.find((tag) => tag.id === coin.name).symbol
-									)}
-								</h3>
+							{#if question.tags.find(/** @param {{"id": String}} tag */ (tag) => tag.id === coin.name)}
+								<div class="flex items-center text-lg">
+									<img
+										class="w-8 h-8 rounded-full mr-2 transition-transform duration-500 ease-in-out transform hover:rotate-180"
+										src={question.tags.find(
+											/** @param {{"id": String}} tag */
+											(tag) => tag.id === coin.name
+										).image}
+										alt={coin.name}
+									/>
+									<span class="mr-2">
+										{formatCoinName(
+											coin.name,
+											question.tags.find(
+												/** @param {{"id": String}} tag */
+												(tag) => tag.id === coin.name
+											).symbol
+										)}
+									</span>
+								</div>
 							{/if}
 						</div>
 					{/each}
@@ -277,7 +294,7 @@
 </div>
 
 {#if showDeleteModal}
-	<Modal on:close={close}>
+	<Modal on:close={closeModal}>
 		<form
 			class="bg-[#041014] p-6 rounded-lg shadow text-center"
 			method="POST"
@@ -299,7 +316,7 @@
 {/if}
 
 {#if showEditModal}
-	<Modal on:close={close}>
+	<Modal on:close={closeModal}>
 		<form
 			class="bg-[#041014] p-6 rounded-lg shadow text-center"
 			method="POST"

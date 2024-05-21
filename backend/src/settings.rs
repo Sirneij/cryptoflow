@@ -23,6 +23,12 @@ pub struct Secret {
 }
 
 #[derive(serde::Deserialize, Clone)]
+pub struct CoinGeckoSettings {
+    pub api_url: String,
+    pub api_key: String,
+}
+
+#[derive(serde::Deserialize, Clone)]
 pub struct SuperUser {
     pub email: String,
     pub password: String,
@@ -40,6 +46,7 @@ pub struct Settings {
     pub interval_of_coin_update: u64,
     pub superuser: SuperUser,
     pub secret: Secret,
+    pub coingecko: CoinGeckoSettings,
 }
 
 /// The possible runtime environment for our application.

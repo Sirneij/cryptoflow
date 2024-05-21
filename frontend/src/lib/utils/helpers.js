@@ -160,3 +160,52 @@ export function timeAgo(dateString) {
 		return date.toLocaleDateString();
 	}
 }
+
+/**
+ * @type {import('chart.js').ChartConfiguration<'line', { x: Date; y: number; }[], unknown>}
+ */
+export const chartConfig = {
+	type: 'line',
+	data: {
+		datasets: []
+	},
+	options: {
+		scales: {
+			x: {
+				type: 'time',
+				time: {
+					unit: 'day'
+				},
+				title: {
+					display: true,
+					text: 'Date'
+				}
+			},
+			y: {
+				title: {
+					display: true,
+					text: 'Value'
+				}
+			}
+		},
+		responsive: true,
+		tooltips: {
+			enabled: true,
+			mode: 'single',
+			callbacks: {
+				label: function (tooltipItems, data) {
+					return tooltipItems.yLabel + ' : ' + tooltipItems.xLabel;
+				},
+				title: function (tooltipItems, data) {
+					return 'Custom Title';
+				}
+			},
+			backgroundColor: '#FFF',
+			titleFontSize: 16,
+			titleFontColor: '#0066ff',
+			bodyFontColor: '#000',
+			bodyFontSize: 14,
+			displayColors: false
+		}
+	}
+};

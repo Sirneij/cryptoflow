@@ -11,7 +11,9 @@ SELECT
         JSON_BUILD_OBJECT(
             'id', t.id,
             'name', t.name,
-            'symbol', t.symbol
+            'symbol', t.symbol,
+            'image', t.image,
+            'market_cap_rank', t.market_cap_rank
         )
     ) as tags_json,
     u.id as user_id,
@@ -44,7 +46,9 @@ SELECT
         JSON_BUILD_OBJECT(
             'id', t.id,
             'name', t.name,
-            'symbol', t.symbol
+            'symbol', t.symbol,
+            'image', t.image,
+            'market_cap_rank', t.market_cap_rank
         )
     ) as tags_json,
     u.id as user_id,

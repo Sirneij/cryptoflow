@@ -74,6 +74,8 @@ pub struct Tag {
     pub id: String,
     pub name: String,
     pub symbol: String,
+    pub image: Option<String>,
+    pub market_cap_rank: Option<i32>,
 }
 
 #[derive(serde::Serialize, Debug)]

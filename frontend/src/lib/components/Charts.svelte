@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
 	import 'chartjs-adapter-moment';
+	import { chartConfig } from '$lib/utils/helpers';
 
 	export let coins,
 		/** @type {import('../../routes/$types').ActionData} */
@@ -17,7 +18,11 @@
 	/** @type {HTMLInputElement} */
 	let tagInput,
 		/** @type {HTMLCanvasElement} */
-		lineChartContainer,
+		priceChartContainer,
+		/** @type {HTMLCanvasElement} */
+		marketCapChartContainer,
+		/** @type {HTMLCanvasElement} */
+		totalVolumeChartContainer,
 		fetching = false,
 		rendered = false,
 		/**
@@ -37,18 +42,17 @@
 
 		context,
 		/** @type {Chart<"line", { x: Date; y: number; }[], unknown>} */
-		myChart,
-		/**
-		 * @typedef {Object} Dataset
-		 * @property {string} label - The name of the dataset
-		 * @property {Array<{x: Date, y: number}>} data - The data points in the dataset
-		 * @property {boolean} fill - Whether the area under the line should be filled
-		 * @property {string} borderColor - The color of the line
-		 * @property {number} tension - The amount of tension to apply to the line
-		 */
-
-		/** @type {Array<Dataset>} */
-		datasets = [];
+		priceChart,
+		/** @type {Chart<"line", { x: Date; y: number; }[], unknown>} */
+		marketCapChart,
+		/** @type {Chart<"line", { x: Date; y: number; }[], unknown>} */
+		totalVolumeChart,
+		/** @type {CanvasRenderingContext2D|null} */
+		priceContext,
+		/** @type {CanvasRenderingContext2D|null} */
+		marketCapContext,
+		/** @type {CanvasRenderingContext2D|null} */
+		totalVolumeContext;
 
 	/** @type {import('../../routes/$types').SubmitFunction}*/
 	const handleCoinDataFetch = async () => {
@@ -67,60 +71,78 @@
 	};
 
 	onMount(() => {
-		context = lineChartContainer.getContext('2d');
-		if (context === null) {
-			throw new Error('Failed to get 2D context for canvas');
+		priceContext = priceChartContainer.getContext('2d');
+		marketCapContext = marketCapChartContainer.getContext('2d');
+		totalVolumeContext = totalVolumeChartContainer.getContext('2d');
+
+		if (priceContext === null || marketCapContext === null || totalVolumeContext === null) {
+			throw new Error('Could not get the context of the canvas element');
 		}
-		myChart = new Chart(context, {
-			type: 'line',
-			data: {
-				datasets: datasets
-			},
-			options: {
-				scales: {
-					x: {
-						type: 'time',
-						time: {
-							unit: 'day'
-						}
-					}
-				},
-				responsive: true
-			}
-		});
+
+		// Create a new configuration object for each chart
+		const priceChartConfig = { ...chartConfig };
+		priceChartConfig.data = { datasets: [] };
+		priceChart = new Chart(priceContext, priceChartConfig);
+
+		const marketCapChartConfig = { ...chartConfig };
+		marketCapChartConfig.data = { datasets: [] };
+		marketCapChart = new Chart(marketCapContext, marketCapChartConfig);
+
+		const totalVolumeChartConfig = { ...chartConfig };
+		totalVolumeChartConfig.data = { datasets: [] };
+		totalVolumeChart = new Chart(totalVolumeContext, totalVolumeChartConfig);
+
 		rendered = true;
 	});
 
 	/**
 	 * Update the chart with new data
-	 * @param {CryptoDataSet} data - The new data to update the chart with
+	 * @param {Chart<"line", { x: Date; y: number; }[], unknown>} chart - The chart to update
+	 * @param {Array<Array<number>>} data - The new data to update the chart with
+	 * @param {string} label - The label to use for the dataset
+	 * @param {string} cryptoName - The name of the cryptocurrency
 	 */
-	const updateChart = (data) => {
-		for (const crypto in data) {
-			Object.keys(data[crypto]).forEach((key) => {
-				datasets.push({
-					label: `${crypto} ${key}`,
-					data: data[crypto][key].map(
-						/** @param {Array<number>} item */
-						(item) => {
-							return {
-								x: new Date(item[0]),
-								y: item[1]
-							};
-						}
-					),
-					fill: false,
-					borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16), // Generate a random color for each dataset
-					tension: 0.1
-				});
-			});
-		}
-		myChart.data.datasets = datasets;
-		myChart.update();
+	const updateChart = (chart, data, label, cryptoName) => {
+		const dataset = {
+			label: `${cryptoName} ${label}`,
+			data: data.map(
+				/** @param {Array<number>} item */
+				(item) => {
+					return {
+						x: new Date(item[0]),
+						y: item[1]
+					};
+				}
+			),
+			fill: false,
+			borderColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+			tension: 0.1
+		};
+
+		chart.data.datasets.push(dataset);
+		chart.update();
 	};
 
 	$: if (rendered) {
-		updateChart(plotData);
+		// Clear the datasets for each chart
+		priceChart.data.datasets = [];
+		marketCapChart.data.datasets = [];
+		totalVolumeChart.data.datasets = [];
+
+		Object.keys(plotData).forEach(
+			/** @param {string} cryptoName */
+			(cryptoName) => {
+				// Update each chart with the new data
+				updateChart(priceChart, plotData[cryptoName].prices, 'Price', cryptoName);
+				updateChart(marketCapChart, plotData[cryptoName].market_caps, 'Market Cap', cryptoName);
+				updateChart(
+					totalVolumeChart,
+					plotData[cryptoName].total_volumes,
+					'Total Volume',
+					cryptoName
+				);
+			}
+		);
 	}
 </script>
 
@@ -178,10 +200,8 @@
 	{/if}
 </form>
 
-<div
-	in:fly={{ x: 100, duration: 1000, delay: 1000 }}
-	out:fly={{ duration: 1000 }}
-	class="chart-wrapper"
->
-	<canvas bind:this={lineChartContainer} />
+<div in:fly={{ x: 100, duration: 1000, delay: 1000 }} out:fly={{ duration: 1000 }}>
+	<canvas bind:this={priceChartContainer} />
+	<canvas bind:this={marketCapChartContainer} />
+	<canvas bind:this={totalVolumeChartContainer} />
 </div>

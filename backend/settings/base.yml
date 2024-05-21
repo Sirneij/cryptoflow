@@ -13,3 +13,7 @@ email:
   host_user_password: ""
 
 interval_of_coin_update: 24
+
+coingecko:
+  api_url: "https://api.coingecko.com/api/v3"
+  api_key: ""

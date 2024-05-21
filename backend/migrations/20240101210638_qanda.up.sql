@@ -39,7 +39,9 @@ UPDATE ON answers FOR EACH ROW EXECUTE PROCEDURE update_answers_timestamp();
 CREATE TABLE IF NOT EXISTS tags (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
     name VARCHAR (255) NOT NULL,
-    symbol VARCHAR (255) NOT NULL
+    symbol VARCHAR (255) NOT NULL,
+    image TEXT NULL,
+    market_cap_rank INT NULL
 );
 CREATE INDEX IF NOT EXISTS tags_index_name ON tags (name);
 CREATE INDEX IF NOT EXISTS tags_index_symbol ON tags (symbol);

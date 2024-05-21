@@ -46,9 +46,10 @@ impl Application {
         let store_for_update = store.clone();
 
         // Update coins
+        let cloned_settings = settings.clone();
         tokio::spawn(async move {
             loop {
-                store_for_update.update_coins().await;
+                store_for_update.update_coins(&cloned_settings).await;
                 sleep(Duration::from_secs(
                     settings.interval_of_coin_update * 60 * 60,
                 ))
