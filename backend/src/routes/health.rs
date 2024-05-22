@@ -6,6 +6,7 @@ pub async fn health_check() -> impl IntoResponse {
     SuccessResponse {
         message: "Rust(Axum) and SvelteKit application is healthy!".to_string(),
         status_code: StatusCode::OK.as_u16(),
+        ..Default::default()
     }
     .into_response()
 }

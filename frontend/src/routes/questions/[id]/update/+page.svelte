@@ -2,6 +2,9 @@
 	import { applyAction, enhance } from '$app/forms';
 	import Loader from '$lib/components/Loader.svelte';
 	import ShowError from '$lib/components/ShowError.svelte';
+	import TagCoin from '$lib/components/inputs/TagCoin.svelte';
+	import Text from '$lib/components/inputs/Text.svelte';
+	import TextArea from '$lib/components/inputs/TextArea.svelte';
 	import { notification } from '$lib/stores/notification.store.js';
 	import { selectedTags } from '$lib/stores/tags.stores.js';
 	import { displaySelectedTags, filterTags, setInputElement } from '$lib/utils/select.custom.js';
@@ -50,58 +53,34 @@
 		use:enhance={handleUpdateQuestion}
 	>
 		<ShowError {form} />
-		<div class="mb-4">
-			<label for="title" class="block text-[#efefef] text-sm font-bold mb-2">Title</label>
-			<input
-				type="text"
+		<div class="mb-2">
+			<Text
+				label="Title"
 				id="title"
 				name="title"
-				bind:value={question.title}
-				class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be]"
 				placeholder="Enter your question title"
+				value={question.title}
 			/>
 		</div>
 
-		<div class="mb-4">
-			<label for="content" class="block text-[#efefef] text-sm font-bold mb-2">Content</label>
-			<textarea
-				id="content"
-				name="content"
-				bind:value={question.raw_content}
-				rows="8"
-				class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be]"
-				placeholder="Enter your question details (markdown supported)..."
-			></textarea>
-		</div>
+		<TextArea
+			label="Content"
+			id="content"
+			name="content"
+			placeholder="Enter your question details (markdown supported)..."
+			value={question.raw_content}
+		/>
 
-		<div>
-			<div class="mb-6">
-				<div class="mb-4">
-					<label for="tag-input" class="block text-[#efefef] text-sm font-bold mb-2">Tags</label>
-					<input
-						bind:this={tagInput}
-						type="text"
-						id="tag-input"
-						class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be]"
-						placeholder={$selectedTags.length >= 4
-							? 'Max tags reached'
-							: `Add up to ${4 - $selectedTags.length} more tags`}
-						disabled={$selectedTags.length >= 4}
-						on:keyup={() => {
-							filterTags(tagInput, coins);
-						}}
-					/>
-				</div>
-				<div id="suggestions" class="mt-2">
-					<!-- Suggestions will go here -->
-				</div>
-			</div>
-			<div id="selected-tags" class="mt-4">
-				<!-- Selected tags will go here -->
-			</div>
-
-			<input type="hidden" name="tags" value={$selectedTags.join(',')} />
-		</div>
+		<TagCoin
+			label="Tags"
+			id="tag-input"
+			name="tags"
+			value=""
+			{coins}
+			placeholder={$selectedTags.length >= 4
+				? 'Max tags reached'
+				: `Add up to ${4 - $selectedTags.length} more tags`}
+		/>
 
 		{#if processing}
 			<Loader width={20} message="Updating question..." />

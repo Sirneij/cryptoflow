@@ -18,6 +18,7 @@ pub async fn logout_user(
         SuccessResponse {
             message: "The unauthentication process was successful.".to_string(),
             status_code: StatusCode::OK.as_u16(),
+            ..Default::default()
         }
         .into_response(),
     ))

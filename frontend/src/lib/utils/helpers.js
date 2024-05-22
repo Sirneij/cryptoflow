@@ -235,18 +235,18 @@ export const handleZoom = (event, chart) => {
 };
 
 /**
- * Rehighlight code blocks.
+ * Highlight code blocks.
  * @file lib/utils/helpers.js
  * @param {import('highlight.js').HLJSApi} hljs - The highlight.js object
  */
-export const rehighlightCodeBlocks = (hljs) => {
+export const highlightCodeBlocks = (hljs) => {
 	const codeBlocks = document.querySelectorAll('pre code');
 	codeBlocks.forEach((block) => {
 		if (block.dataset.highlighted) {
 			delete block.dataset.highlighted;
-			block.innerHTML = block.innerHTML; // Force a reflow
-			hljs.highlightElement(block);
-			block.dataset.highlighted = 'yes';
 		}
+		block.innerHTML = block.innerHTML; // Force a reflow
+		hljs.highlightElement(block);
+		block.dataset.highlighted = 'yes';
 	});
 };

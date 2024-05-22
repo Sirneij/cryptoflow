@@ -130,7 +130,7 @@ pub async fn send_multipart_email(
 
         For future reference, your user ID number is {}.
 
-        Please visit {}/auth/activate/{} and input the token below to activate your account:
+        Please visit {}/users/activate/{} and input the token below to activate your account:
 
         {}
 

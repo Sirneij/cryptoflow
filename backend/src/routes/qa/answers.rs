@@ -50,6 +50,7 @@ pub async fn delete_an_answer(
     Ok(crate::utils::SuccessResponse {
         message: "Answer deleted successfully".to_string(),
         status_code: StatusCode::NO_CONTENT.as_u16(),
+        ..Default::default()
     }
     .into_response())
 }

@@ -50,8 +50,9 @@ pub async fn activate_user_account(
             })?;
 
         Ok(SuccessResponse {
-            message: "The activation process was successful.".to_string(),
+            message: "The activation process was successful. You can now login.".to_string(),
             status_code: StatusCode::OK.as_u16(),
+            ..Default::default()
         }
         .into_response())
     } else {

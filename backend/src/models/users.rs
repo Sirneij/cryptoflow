@@ -12,7 +12,7 @@ pub struct User {
     pub date_joined: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, sqlx::FromRow)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, sqlx::FromRow, Clone)]
 pub struct UserVisible {
     pub id: uuid::Uuid,
     pub email: String,

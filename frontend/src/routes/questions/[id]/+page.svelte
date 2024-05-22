@@ -6,10 +6,10 @@
 		formatCoinName,
 		formatPrice,
 		getCoinsPricesServer,
-		rehighlightCodeBlocks,
+		highlightCodeBlocks,
 		timeAgo
 	} from '$lib/utils/helpers.js';
-	import { onMount } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 	import Loader from '$lib/components/Loader.svelte';
 	import { scale } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
@@ -18,18 +18,19 @@
 	import ShowError from '$lib/components/ShowError.svelte';
 	import { notification } from '$lib/stores/notification.store.js';
 	import 'highlight.js/styles/night-owl.css';
+	import TextArea from '$lib/components/inputs/TextArea.svelte';
 
 	export let data;
 
 	/** @type {import('./$types').ActionData} */
 	export let form;
 	/** @type {Array<{"name": String, "price": number}>} */
-	let coinPrices = [];
-	let processing = false;
-	let showDeleteModal = false;
-	let showEditModal = false;
-	let answerID = '';
-	let answerContent = '';
+	let coinPrices = [],
+		processing = false,
+		showDeleteModal = false,
+		showEditModal = false,
+		answerID = '',
+		answerContent = '';
 
 	$: ({ question, answers } = data);
 
@@ -52,7 +53,7 @@
 	const setAnswerContent = (content) => (answerContent = content);
 
 	onMount(async () => {
-		hljs.highlightAll();
+		highlightCodeBlocks(hljs);
 		if (question) {
 			const tagsString = question.tags
 				.map(
@@ -64,6 +65,10 @@
 		}
 	});
 
+	afterUpdate(() => {
+		highlightCodeBlocks(hljs);
+	});
+
 	/** @type {import('./$types').SubmitFunction} */
 	const handleAnswerQuestion = async () => {
 		processing = true;
@@ -71,8 +76,8 @@
 			processing = false;
 			if (result.type === 'success') {
 				if (result.data && 'answer' in result.data) {
-					answers = [...answers, result.data.answer];
-					rehighlightCodeBlocks(hljs);
+					answers = [result.data.answer, ...answers];
+					answerContent = '';
 					notification.set({ message: 'Answer posted successfully', colorName: 'blue' });
 				}
 			}
@@ -110,7 +115,6 @@
 					}
 				);
 				answerContent = '';
-				rehighlightCodeBlocks(hljs);
 				notification.set({ message: 'Answer updated successfully', colorName: 'blue' });
 			}
 			await applyAction(result);
@@ -224,12 +228,13 @@
 			>
 				<h2 class="text-xl font-bold mb-4">Your Answer</h2>
 				<ShowError {form} />
-				<textarea
-					class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:border-[#2596be] focus:outline-none"
-					rows="6"
-					bind:value={answerContent}
+
+				<TextArea
+					label=""
+					id="answer"
 					name="content"
 					placeholder="Write your answer here (markdown supported)..."
+					bind:value={answerContent}
 				/>
 
 				{#if processing}

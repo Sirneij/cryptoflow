@@ -64,7 +64,7 @@ pub async fn register_user(
     // Send activation code to user's email
     crate::utils::send_multipart_email(
         "Welcome to CryptoFlow with Rust (axum) and SvelteKit".to_string(),
-        user,
+        user.clone(),
         state.clone(),
         "user_welcome.html",
         activation_code,
@@ -80,5 +80,6 @@ pub async fn register_user(
     Ok(SuccessResponse {
         message: "Registration complete! Check your email for a verification code to activate your account.".to_string(),
         status_code: StatusCode::CREATED.as_u16(),
+        user_id: Some(user.id),
     }.into_response())
 }

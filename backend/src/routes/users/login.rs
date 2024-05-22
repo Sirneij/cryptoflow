@@ -90,6 +90,7 @@ pub async fn login_user(
         SuccessResponse {
             message: "The authentication process was successful.".to_string(),
             status_code: StatusCode::OK.as_u16(),
+            ..Default::default()
         }
         .into_response(),
     ))

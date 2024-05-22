@@ -10,6 +10,7 @@
 	import Chart from 'chart.js/auto';
 	import 'chartjs-adapter-moment';
 	import { chartConfig, handleZoom } from '$lib/utils/helpers';
+	import TagCoin from './inputs/TagCoin.svelte';
 
 	export let coins,
 		/** @type {import('../../routes/$types').ActionData} */
@@ -157,31 +158,14 @@
 	<ShowError {form} />
 	<div style="display: flex; justify-content: space-between;">
 		<div style="flex: 2; margin-right: 10px;">
-			<div class="mb-6">
-				<div class="mb-4">
-					<label for="tag-input" class="block text-[#efefef] text-sm font-bold mb-2">
-						Select Cryptocurrency
-					</label>
-					<input
-						bind:this={tagInput}
-						type="text"
-						id="tag-input"
-						class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be]"
-						placeholder="Select up to 4 cryptocurrencies..."
-						on:keyup={() => {
-							filterTags(tagInput, coins);
-						}}
-					/>
-				</div>
-				<div id="suggestions" class="mt-2">
-					<!-- Suggestions will go here -->
-				</div>
-			</div>
-			<div id="selected-tags" class="mt-4">
-				<!-- Selected tags will go here -->
-			</div>
-
-			<input type="hidden" name="tags" value={$selectedTags.join(',')} required />
+			<TagCoin
+				label="Cryptocurrencies"
+				id="tag-input"
+				name="tags"
+				value=""
+				{coins}
+				placeholder="Select cryptocurrencies..."
+			/>
 		</div>
 		<div style="flex: 1; margin-left: 10px;">
 			<label for="days" class="block text-[#efefef] text-sm font-bold mb-2">Days</label>
@@ -191,7 +175,7 @@
 				name="days"
 				value="7"
 				required
-				class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be]"
+				class="w-full p-4 bg-[#0a0a0a] text-[#efefef] border border-[#145369] rounded focus:outline-none focus:border-[#2596be] text-gray-500"
 				placeholder="Enter days"
 			/>
 		</div>

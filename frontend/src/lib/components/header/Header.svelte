@@ -14,8 +14,8 @@
 		showDropdown = false;
 	}
 
+	/** @type {import('../../../routes/$types').SubmitFunction}*/
 	const handleLogout = async () => {
-		// @ts-ignore
 		return async ({ result }) => {
 			if (result.type === 'redirect') {
 				$notification = { message: 'Logout successful', colorName: 'blue' };

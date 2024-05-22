@@ -25,6 +25,17 @@ where
 pub struct SuccessResponse {
     pub message: String,
     pub status_code: u16,
+    pub user_id: Option<uuid::Uuid>,
+}
+
+impl Default for SuccessResponse {
+    fn default() -> Self {
+        Self {
+            message: "Success".to_string(),
+            status_code: StatusCode::OK.as_u16(),
+            user_id: None,
+        }
+    }
 }
 
 impl IntoResponse for SuccessResponse {

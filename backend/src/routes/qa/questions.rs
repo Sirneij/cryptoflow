@@ -59,6 +59,7 @@ pub async fn delete_a_question(
     let response = crate::utils::SuccessResponse {
         message: "Question deleted successfully".to_string(),
         status_code: StatusCode::NO_CONTENT.as_u16(),
+        ..Default::default()
     };
 
     Ok(response.into_response())
@@ -120,6 +121,7 @@ pub async fn update_a_question(
     let response = crate::utils::SuccessResponse {
         message: "Question updated successfully".to_string(),
         status_code: StatusCode::NO_CONTENT.as_u16(),
+        ..Default::default()
     };
 
     Ok(response.into_response())
