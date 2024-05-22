@@ -1,4 +1,7 @@
-use crate::utils::{CustomAppError, CustomAppJson};
+use crate::{
+    settings,
+    utils::{CustomAppError, CustomAppJson},
+};
 use axum::extract::Query;
 use std::collections::HashMap;
 
@@ -23,10 +26,11 @@ pub async fn get_coin_market_data(
 ) -> Result<CustomAppJson<HashMap<String, CoinMarketData>>, CustomAppError> {
     let tag_ids: Vec<String> = coin_req.tags.split(',').map(|s| s.to_string()).collect();
     let mut responses = HashMap::new();
+    let settings = settings::get_settings().expect("Failed to get settings");
     for tag_id in tag_ids {
         let url = format!(
-            "https://api.coingecko.com/api/v3/coins/{}/market_chart?vs_currency={}&days={}",
-            &tag_id, coin_req.currency, coin_req.days
+            "{}/coins/{}/market_chart?vs_currency={}&days={}",
+            settings.coingecko.api_url, &tag_id, coin_req.currency, coin_req.days
         );
         match reqwest::get(&url).await {
             Ok(response) => match response.json::<CoinMarketData>().await {

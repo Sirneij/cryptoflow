@@ -209,3 +209,44 @@ export const chartConfig = {
 		}
 	}
 };
+
+/**
+ * Handle zooming on a chart.
+ * @file lib/utils/helpers.js
+ * @param {WheelEvent} event - The event to handle
+ * @param {Chart<"line", { x: Date; y: number; }[], unknown>} chart - The chart to zoom
+ */
+export const handleZoom = (event, chart) => {
+	event.preventDefault();
+	const zoomFactor = 1.1;
+	const direction = event.deltaY > 0 ? 1 : -1;
+
+	const { min, max } = chart.scales.x;
+	const range = max - min;
+	const newRange = direction > 0 ? range * zoomFactor : range / zoomFactor;
+	const center = (event.offsetX / event.target.clientWidth) * (max - min) + min;
+	const newMin = center - (center - min) * (newRange / range);
+	const newMax = center + (max - center) * (newRange / range);
+
+	chart.options.scales.x.min = newMin;
+	chart.options.scales.x.max = newMax;
+
+	chart.update();
+};
+
+/**
+ * Rehighlight code blocks.
+ * @file lib/utils/helpers.js
+ * @param {import('highlight.js').HLJSApi} hljs - The highlight.js object
+ */
+export const rehighlightCodeBlocks = (hljs) => {
+	const codeBlocks = document.querySelectorAll('pre code');
+	codeBlocks.forEach((block) => {
+		if (block.dataset.highlighted) {
+			delete block.dataset.highlighted;
+			block.innerHTML = block.innerHTML; // Force a reflow
+			hljs.highlightElement(block);
+			block.dataset.highlighted = 'yes';
+		}
+	});
+};

@@ -17,6 +17,10 @@
     --bg-orange: rgb(255 237 213);
     --text-orange: rgb(234 88 12);
 }
+
+body {
+    font-family: 'Fira Sans', sans-serif;
+}
 .notification {
     width: 50%;
     background-color: var(--bg-emerald);
@@ -46,6 +50,13 @@
 pre {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
+}
+pre code {
+    font-size: var(--fs-6);
+    font-family: 'Fira Code', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border-radius: 1rem;
 }
 .tag-container {
 	color: var(--text-slate-gray);

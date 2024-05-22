@@ -15,8 +15,10 @@ pub async fn get_crypto_prices(
     cryptos: String,
     currency: &str,
 ) -> Result<CryptoPrices, reqwest::Error> {
+    let settings = crate::settings::get_settings().expect("Failed to get settings");
     let url = format!(
-        "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies={}",
+        "{}/simple/price?ids={}&vs_currencies={}",
+        settings.coingecko.api_url,
         cryptos,
         currency.to_lowercase()
     );

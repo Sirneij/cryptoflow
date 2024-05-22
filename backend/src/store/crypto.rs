@@ -44,7 +44,8 @@ impl crate::store::Store {
 
         Ok(tags)
     }
-    pub async fn update_coins(&self, settings: &crate::settings::Settings) {
+    pub async fn update_coins(&self) {
+        let settings = crate::settings::get_settings().expect("Failed to get settings");
         let url = format!(
             "{}/coins/markets?vs_currency=USD&days=30",
             &settings.coingecko.api_url

@@ -6,6 +6,7 @@
 		formatCoinName,
 		formatPrice,
 		getCoinsPricesServer,
+		rehighlightCodeBlocks,
 		timeAgo
 	} from '$lib/utils/helpers.js';
 	import { onMount } from 'svelte';
@@ -71,8 +72,7 @@
 			if (result.type === 'success') {
 				if (result.data && 'answer' in result.data) {
 					answers = [...answers, result.data.answer];
-					answerContent = '';
-					hljs.highlightAll(); // Reapply syntax highlighting
+					rehighlightCodeBlocks(hljs);
 					notification.set({ message: 'Answer posted successfully', colorName: 'blue' });
 				}
 			}
@@ -110,7 +110,7 @@
 					}
 				);
 				answerContent = '';
-				hljs.highlightAll(); // Reapply syntax highlighting
+				rehighlightCodeBlocks(hljs);
 				notification.set({ message: 'Answer updated successfully', colorName: 'blue' });
 			}
 			await applyAction(result);

@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	import Chart from 'chart.js/auto';
 	import 'chartjs-adapter-moment';
-	import { chartConfig } from '$lib/utils/helpers';
+	import { chartConfig, handleZoom } from '$lib/utils/helpers';
 
 	export let coins,
 		/** @type {import('../../routes/$types').ActionData} */
@@ -93,6 +93,13 @@
 		totalVolumeChart = new Chart(totalVolumeContext, totalVolumeChartConfig);
 
 		rendered = true;
+
+		// Add event listeners for zooming
+		priceChartContainer.addEventListener('wheel', (event) => handleZoom(event, priceChart));
+		marketCapChartContainer.addEventListener('wheel', (event) => handleZoom(event, marketCapChart));
+		totalVolumeChartContainer.addEventListener('wheel', (event) =>
+			handleZoom(event, totalVolumeChart)
+		);
 	});
 
 	/**
