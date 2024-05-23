@@ -1,6 +1,4 @@
 <script>
-	import { selectedTags } from '$lib/stores/tags.stores.js';
-	import { filterTags } from '$lib/utils/select.custom';
 	import { applyAction, enhance } from '$app/forms';
 	import { notification } from '$lib/stores/notification.store';
 	import ShowError from './ShowError.svelte';

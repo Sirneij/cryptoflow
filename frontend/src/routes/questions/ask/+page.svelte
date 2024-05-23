@@ -11,9 +11,6 @@
 
 	$: ({ coins } = data);
 
-	/** @type {HTMLInputElement} */
-	let tagInput;
-
 	/** @type {import('./$types').ActionData} */
 	export let form;
 
@@ -43,7 +40,13 @@
 	>
 		<ShowError {form} />
 		<div class="mb-2">
-			<Text label="Title" id="title" name="title" placeholder="Enter your question title..." />
+			<Text
+				label="Title"
+				id="title"
+				name="title"
+				placeholder="Enter your question title..."
+				value=""
+			/>
 		</div>
 
 		<div class="mb-2">
@@ -52,6 +55,7 @@
 				id="content"
 				name="content"
 				placeholder="Provide your question in detail (markdown supported) ..."
+				value=""
 			/>
 		</div>
 
@@ -61,6 +65,7 @@
 			name="tags"
 			{coins}
 			placeholder="Add up to 4 tags (atleast 1 is required)..."
+			value=""
 		/>
 
 		{#if processing}
